@@ -40,4 +40,4 @@ def docker_login_aws():
     docker_client.login("AWS", authoriziationToken, registry=proxyEndpoint)
 
 
-docker_pull("391292943957.dkr.ecr.ap-southeast-1.amazonaws.com/accor-adapter")
+# docker_pull("391292943957.dkr.ecr.ap-southeast-1.amazonaws.com/accor-adapter")
