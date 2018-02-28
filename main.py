@@ -1,25 +1,38 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QFileDialog, \
     QMessageBox, QTableWidget, QAbstractScrollArea, QTableWidgetItem, QProgressDialog
-from PyQt5.QtCore import QRect, QCoreApplication
+from PyQt5.QtCore import QRect, QCoreApplication, Qt
 from form import Ui_Form
 from config import myconfig
+from mythreads import WorkThread
 from remote import Remote
+
 
 class mywindow(QDialog, Ui_Form):
     def __init__(self):
         super(mywindow, self).__init__()
         self.setupUi(self)
         self.show()
-        # self.ProjectPath.setText(myconfig.project)
-        # self.Tag.setText(myconfig.tag)
-        self.textEdit.setHtml(Remote.dockerfile())
+        self.ProjectPath.setText(myconfig.project)
+        self.Tag.setText(myconfig.tag)
+        RepositoriesView = MyTableView(self.tab_2)
+        RepositoriesView.display_Repositories()
+        RepositoriesView.get_Repositories()
+        self.wait = QProgressDialog('Loading.......', None, 0, 100)
+        self.wait.show()
+        self.worker = WorkThread(self)
+        self.worker.finished.connect(self.finished)
+        self.worker.start()
+
+    def finished(self, dockerfile):
+        self.textEdit.setHtml(dockerfile)
         # RepositoriesView = MyTableView(self.tab_2)
         # RepositoriesView.display_Repositories()
         # RepositoriesView.get_Repositories()
+        self.wait.setValue(100)
 
     def folderDialog(self):
-        dialog = QFileDialog(self, 'select Project Path')
+        dialog = QFileDialog(self, 'Select Project Path')
         dialog.setFileMode(QFileDialog.DirectoryOnly)
         dialog.show()
         if dialog.exec_() == QDialog.Accepted:
@@ -45,6 +58,7 @@ class mywindow(QDialog, Ui_Form):
         myconfig.project = self.ProjectPath.text()
         myconfig.tag = self.Tag.text()
         myconfig.save_config()
+
 
 class MyTableView(QTableWidget):
     def __init__(self, parent=None):
@@ -124,7 +138,7 @@ class MyProgressDialog(QProgressDialog):
 
 class Mybutton(QPushButton):
     def __init__(self, parent=None):
-        super(Deletebutton, self).__init__(parent)
+        super(Mybutton, self).__init__(parent)
         self.index = None
 
 

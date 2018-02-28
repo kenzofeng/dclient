@@ -5,10 +5,10 @@ from config import myconfig
 
 
 class Remote(object):
+    dockerfile = ""
 
     def get_aws_access(self):
         pass
-
     @staticmethod
     def dockerfile():
         content = requests.get("http://%s/user/dockerfile/" % myconfig.server, params={'name': myconfig.dockerfile})
