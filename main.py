@@ -3,17 +3,20 @@ from PyQt5.QtWidgets import QApplication, QDialog, QTableWidgetItem, QPushButton
     QMessageBox, QTableWidget, QAbstractScrollArea, QTableWidgetItem, QProgressDialog
 from PyQt5.QtCore import QRect, QCoreApplication
 from form import Ui_Form
-import text
-
+from config import myconfig
+from remote import Remote
 
 class mywindow(QDialog, Ui_Form):
     def __init__(self):
         super(mywindow, self).__init__()
         self.setupUi(self)
-        self.textEdit.setHtml(text.dockerfile)
-        RepositoriesView = MyTableView(self.tab_2)
-        RepositoriesView.display_Repositories()
-        RepositoriesView.get_Repositories()
+        self.show()
+        # self.ProjectPath.setText(myconfig.project)
+        # self.Tag.setText(myconfig.tag)
+        self.textEdit.setHtml(Remote.dockerfile())
+        # RepositoriesView = MyTableView(self.tab_2)
+        # RepositoriesView.display_Repositories()
+        # RepositoriesView.get_Repositories()
 
     def folderDialog(self):
         dialog = QFileDialog(self, 'select Project Path')
@@ -38,6 +41,10 @@ class mywindow(QDialog, Ui_Form):
     def selectfolder(self):
         self.ProjectPath.setText(self.folderDialog())
 
+    def closeEvent(self, QCloseEvent):
+        myconfig.project = self.ProjectPath.text()
+        myconfig.tag = self.Tag.text()
+        myconfig.save_config()
 
 class MyTableView(QTableWidget):
     def __init__(self, parent=None):
@@ -123,5 +130,4 @@ class Mybutton(QPushButton):
 
 app = QApplication(sys.argv)
 window = mywindow()
-window.show()
 sys.exit(app.exec_())

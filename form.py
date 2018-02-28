@@ -66,7 +66,7 @@ class Ui_Form(object):
         self.CreateRep.setObjectName("CreateRep")
         self.tabWidget.addTab(self.tab_2, "")
         self.retranslateUi(Form)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.pushButton.clicked.connect(Form.buildimage)
         self.toolButton.clicked.connect(Form.selectfolder)
         QtCore.QMetaObject.connectSlotsByName(Form)
