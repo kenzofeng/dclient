@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -85,4 +86,3 @@ class Ui_Form(object):
         self.HOME.setText(_translate("Form", "HOME"))
         self.CreateRep.setText(_translate("Form", "Create Repository"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Form", "AWS Repositories"))
-

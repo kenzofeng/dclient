@@ -1,34 +1,38 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QFileDialog, \
     QMessageBox, QTableWidget, QAbstractScrollArea, QTableWidgetItem, QProgressDialog
 from PyQt5.QtCore import QRect, QCoreApplication, Qt
 from form import Ui_Form
 from config import myconfig
 from mythreads import WorkThread
-from remote import Remote
 
 
 class mywindow(QDialog, Ui_Form):
     def __init__(self):
         super(mywindow, self).__init__()
+        self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
+        self.setFixedSize(986, 557)
         self.setupUi(self)
-        self.show()
         self.ProjectPath.setText(myconfig.project)
         self.Tag.setText(myconfig.tag)
-        RepositoriesView = MyTableView(self.tab_2)
-        RepositoriesView.display_Repositories()
-        RepositoriesView.get_Repositories()
+        self.show()
         self.wait = QProgressDialog('Loading.......', None, 0, 100)
+        self.wait.setWindowFlag(Qt.WindowCloseButtonHint)
         self.wait.show()
         self.worker = WorkThread(self)
+        self.worker.progress.connect(self.progress)
         self.worker.finished.connect(self.finished)
         self.worker.start()
 
+    def progress(self, value):
+        self.wait.setValue(int(value))
+
     def finished(self, dockerfile):
         self.textEdit.setHtml(dockerfile)
-        # RepositoriesView = MyTableView(self.tab_2)
-        # RepositoriesView.display_Repositories()
-        # RepositoriesView.get_Repositories()
+        RepositoriesView = MyTableView(self.tab_2)
+        RepositoriesView.display_Repositories()
+        RepositoriesView.get_Repositories()
         self.wait.setValue(100)
 
     def folderDialog(self):
@@ -40,16 +44,21 @@ class mywindow(QDialog, Ui_Form):
 
     def buildimage(self):
         projctpath = self.ProjectPath.text()
-        if projctpath != "":
+        tag = self.Tag.text()
+        if not os.path.exists(projctpath):
+            QMessageBox.critical(self, 'Error Message', 'Project Path is not exists',
+                                 QMessageBox.Yes, QMessageBox.Yes)
+        elif tag == "":
+            QMessageBox.critical(self, 'Error Message', 'Please Input Tag\nTag Format:project_name:version\n'
+                                                        'for example: accor-adapter:1.2.2',
+                                 QMessageBox.Yes, QMessageBox.Yes)
+        else:
             reply = QMessageBox.question(self, 'Message', 'docker build image?',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
                 import mydocker
                 mydocker.build_images(projctpath, self.textEdit.toPlainText(), self.Tag.text())
-
-        else:
-            print("Error Message:please select project path")
 
     def selectfolder(self):
         self.ProjectPath.setText(self.folderDialog())

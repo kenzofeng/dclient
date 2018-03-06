@@ -1,7 +1,12 @@
 import configparser
 import os
+import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+elif __file__:
+    BASE_DIR = os.path.dirname(__file__)
+
 CONFIG_FILE = "config.ini"
 
 
@@ -13,6 +18,7 @@ class MyConifg(object):
         self.init_config()
 
     def init_config(self):
+        print(self.config_file)
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
         self.server = self.config.defaults()['server']
@@ -30,4 +36,4 @@ class MyConifg(object):
 
 
 myconfig = MyConifg()
-print (myconfig)
+print(myconfig)
