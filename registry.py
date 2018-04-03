@@ -20,7 +20,7 @@ class Registry(requests.Session):
     def image_tags_list(self, image_name):
         url = "{}/v2/{}/tags/list".format(self.base_url, image_name)
         response = self._get(url, **self._add_header())
-        return json.loads(response.content)
+        return json.loads(response.content)['tags']
 
     def delete_image(self):
         pass
@@ -33,4 +33,3 @@ class Registry(requests.Session):
 
 
 myregistry = Registry()
-print(myregistry.repositories_list())
