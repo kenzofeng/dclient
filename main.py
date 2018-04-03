@@ -1,10 +1,12 @@
-import sys
 import os
-from PyQt5.QtWidgets import QApplication, QDialog, QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QFileDialog, \
-    QMessageBox, QTableWidget, QAbstractScrollArea, QTableWidgetItem, QProgressDialog
-from PyQt5.QtCore import QRect, QCoreApplication, Qt
-from form import Ui_Form
+import sys
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QFileDialog, \
+    QMessageBox, QProgressDialog
+from ui.View import RepositoryView, TagView
 from config import myconfig
+from form import Ui_Form
 from mythreads import WorkThread
 
 
@@ -30,9 +32,9 @@ class mywindow(QDialog, Ui_Form):
 
     def finished(self, dockerfile):
         self.textEdit.setHtml(dockerfile)
-        RepositoriesView = MyTableView(self.tab_2)
-        RepositoriesView.display_Repositories()
-        RepositoriesView.get_Repositories()
+        RView = RepositoryView(self.tab_2)
+        RView.display_Repositories()
+        RView.get_Repositories()
         self.wait.setValue(100)
 
     def folderDialog(self):
@@ -67,77 +69,6 @@ class mywindow(QDialog, Ui_Form):
         myconfig.project = self.ProjectPath.text()
         myconfig.tag = self.Tag.text()
         myconfig.save_config()
-
-
-class MyTableView(QTableWidget):
-    def __init__(self, parent=None):
-        super(MyTableView, self).__init__(parent)
-        self.setObjectName("myview")
-
-    def display_Repositories(self):
-        self.setGeometry(QRect(10, 50, 961, 491))
-        self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
-        self.setColumnCount(3)
-        self.setRowCount(0)
-        item = QTableWidgetItem()
-        self.setHorizontalHeaderItem(0, item)
-        item = QTableWidgetItem()
-        self.setHorizontalHeaderItem(1, item)
-        item = QTableWidgetItem()
-        self.setHorizontalHeaderItem(2, item)
-        self.horizontalHeader().setDefaultSectionSize(250)
-        self.horizontalHeader().setStretchLastSection(True)
-        item = self.horizontalHeaderItem(0)
-        item.setText(QCoreApplication.translate("Form", "Repository Name"))
-        item = self.horizontalHeaderItem(1)
-        item.setText(QCoreApplication.translate("Form", "Repository URI"))
-        item = self.horizontalHeaderItem(2)
-        item.setText(QCoreApplication.translate("Form", "Action"))
-        self.setColumnWidth(0, 200)
-        self.setColumnWidth(1, 600)
-        self.setColumnWidth(2, 100)
-
-    def display_detail_Repository(self):
-        item = self.horizontalHeaderItem(0)
-        item.setText(QCoreApplication.translate("Form", "tag"))
-        item = self.horizontalHeaderItem(1)
-        item.setText(QCoreApplication.translate("Form", "URI"))
-        item = self.horizontalHeaderItem(2)
-        item.setText(QCoreApplication.translate("Form", "Action"))
-        self.setColumnWidth(0, 200)
-        self.setColumnWidth(1, 600)
-        self.setColumnWidth(2, 100)
-
-    def delete_Repository(self):
-        print(self.sender().index)
-
-    def detail_Repository(self):
-        print(self.sender().objectName())
-        button = self.sender()
-        print(button.pos())
-        index = self.indexAt(button.pos())
-        print(index.row(), index.column())
-
-    def get_Repositories(self):
-        import myaws
-        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.setRowCount(len(myaws.reposiories))
-        for row, rep in enumerate(myaws.reposiories):
-            self.setItem(row, 0, QTableWidgetItem(rep["name"], ))
-            self.setItem(row, 1, QTableWidgetItem(rep["uri"], ))
-            deletebutton = QPushButton("Delete", self, clicked=self.delete_Repository)
-            deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
-            deletebutton.index = [row, 1]
-            deletebutton.setObjectName(rep["name"])
-            detailbutton = QPushButton("Detail", self, clicked=self.detail_Repository)
-            detailbutton.index = [row, 2]
-            widget = QWidget()
-            hLayout = QHBoxLayout()
-            hLayout.addWidget(deletebutton)
-            hLayout.addWidget(detailbutton)
-            hLayout.setContentsMargins(5, 2, 5, 2)
-            widget.setLayout(hLayout)
-            self.setCellWidget(row, 2, widget)
 
 
 class MyProgressDialog(QProgressDialog):

@@ -36,4 +36,3 @@ class MyConifg(object):
 
 
 myconfig = MyConifg()
-print(myconfig)

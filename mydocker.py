@@ -23,11 +23,12 @@ def pull(image):
         print(line)
 
 
-def _docker_login_aws():
-    authoriziationData = myaws.aws_client.get_authorization_token()['authorizationData'][0]
-    authoriziationToken = authoriziationData['authorizationToken']
-    proxyEndpoint = authoriziationData['proxyEndpoint']
-    docker_client.login("AWS", authoriziationToken, registry=proxyEndpoint)
+# def _docker_login_aws():
+#     authoriziationData = myaws.aws_client.get_authorization_token()['authorizationData'][0]
+#     authoriziationToken = authoriziationData['authorizationToken']
+#     proxyEndpoint = authoriziationData['proxyEndpoint']
+#     docker_client.login("AWS", authoriziationToken, registry=proxyEndpoint)
 
 
-
+def docker_login_server():
+    docker_client.login('testuser', 'testpassword', registry='https://docker.derbysoft-test.com')
