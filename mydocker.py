@@ -1,6 +1,5 @@
 import docker
 import sys
-import myaws
 import os
 
 mswindows = (sys.platform == "win32")
@@ -15,12 +14,12 @@ def build_images(projectpath, dockerfile, tag):
     open(os.path.join(projectpath, "dockerfile"), 'w').write(dockerfile)
     global docker_client
     for line in docker_client.build(path=projectpath, tag=tag):
-        print(line)
+        print(str(line, 'utf-8'))
 
 
 def pull(image):
     for line in docker_client.pull(image, stream=True):
-        print(line)
+        print(str(line, 'utf-8'))
 
 
 # def _docker_login_aws():

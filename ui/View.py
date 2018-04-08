@@ -30,9 +30,9 @@ class RepositoryView(QTableWidget):
         self.setColumnWidth(0, 700)
         self.setColumnWidth(1, 100)
 
-    def display_Tags(self):
+    def display_Tags(self, name):
         item = self.horizontalHeaderItem(0)
-        item.setText(QCoreApplication.translate("Form", "Tag"))
+        item.setText(QCoreApplication.translate("Form", "{} Tag".format(name)))
         item = self.horizontalHeaderItem(1)
         item.setText(QCoreApplication.translate("Form", "Action"))
         self.setColumnWidth(0, 700)
@@ -42,15 +42,20 @@ class RepositoryView(QTableWidget):
         print(self.sender().index)
 
     def detail_Repository(self):
-        self.display_Tags()
-        print(self.sender().objectName())
-        button = self.sender()
-        print(button.pos())
-        index = self.indexAt(button.pos())
-        print(index.row(), index.column())
+        image_name = self.sender().objectName()
+        self.display_Tags(image_name)
+        self.get_Tags(image_name)
+        # print(self.sender().objectName())
+        # button = self.sender()
+        # print(button.pos())
+        # index = self.indexAt(button.pos())
+        # print(index.row(), index.column())
 
     def delete_tag(self):
         print(self.sender().index)
+
+    def pull_tag(self):
+        pass
 
     def get_Repositories(self):
         repositories = myregistry.repositories_list()
@@ -72,16 +77,16 @@ class RepositoryView(QTableWidget):
             widget.setLayout(hLayout)
             self.setCellWidget(row, 1, widget)
 
-    def get_Tags(self):
-        tags = myregistry.image_tags_list()
+    def get_Tags(self, name):
+        tags = myregistry.image_tags_list(name)
         self.setRowCount(len(tags))
         for row, rep in enumerate(tags):
             self.setItem(row, 0, QTableWidgetItem(rep, ))
-            deletebutton = QPushButton("Delete", self, clicked=self.delete_Repository)
+            deletebutton = QPushButton("Delete", self, clicked=self.delete_tag)
             deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
             deletebutton.index = [row, 1]
             deletebutton.setObjectName(rep)
-            detailbutton = QPushButton("Detail", self, clicked=self.detail_Repository)
+            detailbutton = QPushButton("Pull", self, clicked=self.delete_tag)
             detailbutton.index = [row, 2]
             detailbutton.setObjectName(rep)
             widget = QWidget()
