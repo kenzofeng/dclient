@@ -1,6 +1,7 @@
 import docker
 import sys
 import os
+from config import myconfig
 
 mswindows = (sys.platform == "win32")
 
@@ -11,10 +12,21 @@ else:
 
 
 def build_images(projectpath, dockerfile, tag):
-    open(os.path.join(projectpath, "dockerfile"), 'w').write(dockerfile)
-    global docker_client
-    for line in docker_client.build(path=projectpath, tag=tag):
-        print(str(line, 'utf-8'))
+    try:
+        open(os.path.join(projectpath, "dockerfile"), 'w').write(dockerfile)
+        global docker_client
+        for line in docker_client.build(path=projectpath, tag="{}/{}".format(myconfig.docker_server, tag)):
+            print(str(line, 'utf-8'))
+    except Exception as e:
+        print(e)
+
+
+def push_image(tag):
+    try:
+        for line in docker_client.push("{}/{}".format(myconfig.docker_server, tag), stream=True):
+            print(str(line, 'utf-8'))
+    except Exception as e:
+        print(e)
 
 
 def pull(image):

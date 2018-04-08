@@ -32,11 +32,11 @@
     <attribute name="title">
      <string>Image</string>
     </attribute>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="buildbutton">
      <property name="geometry">
       <rect>
        <x>870</x>
-       <y>470</y>
+       <y>410</y>
        <width>91</width>
        <height>41</height>
       </rect>
@@ -108,10 +108,22 @@
       </item>
      </layout>
     </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>870</x>
+       <y>470</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>push</string>
+     </property>
+    </widget>
     <zorder>layoutWidget</zorder>
+    <zorder>buildbutton</zorder>
     <zorder>pushButton</zorder>
-    <zorder>groupBox</zorder>
-    <zorder>textEdit</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -138,11 +150,6 @@
      <column>
       <property name="text">
        <string>Repository Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Repository URI</string>
       </property>
      </column>
      <column>
@@ -182,13 +189,13 @@
  </widget>
  <tabstops>
   <tabstop>ProjectPath</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>buildbutton</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>buildbutton</sender>
    <signal>clicked()</signal>
    <receiver>Form</receiver>
    <slot>buildimage()</slot>

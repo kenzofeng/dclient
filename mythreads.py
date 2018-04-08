@@ -14,16 +14,15 @@ class WorkThread(QThread):
     def run(self):
         self.progress.emit(50)
         dockerfile = Remote.dockerfile()
-
         self.finished.emit(dockerfile)
 
 
-class BuildThrad(QThread):
+class BuildThread(QThread):
     finished = pyqtSignal(object)
     progress = pyqtSignal(object)
 
     def __init__(self, projctpath, docker_text, tag_text, parent=None):
-        super(BuildThrad, self).__init__(parent)
+        super(BuildThread, self).__init__(parent)
         self.parent = parent
         self.projctpath = projctpath
         self.docker_text = docker_text
@@ -32,4 +31,19 @@ class BuildThrad(QThread):
     def run(self):
         self.progress.emit(50)
         mydocker.build_images(self.projctpath, self.docker_text, self.tag_text)
+        self.finished.emit(100)
+
+
+class PushThread(QThread):
+    finished = pyqtSignal(object)
+    progress = pyqtSignal(object)
+
+    def __init__(self, tag_text, parent=None):
+        super(PushThread, self).__init__(parent)
+        self.parent = parent
+        self.tag_text = tag_text
+
+    def run(self):
+        self.progress.emit(50)
+        mydocker.push_image(self.tag_text)
         self.finished.emit(100)
