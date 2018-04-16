@@ -39,12 +39,16 @@ class RepositoryView(QTableWidget):
         self.setColumnWidth(1, 100)
 
     def delete_Repository(self):
-        print(self.sender().index)
+        pass
+        # print(self.sender().index)
 
     def detail_Repository(self):
-        image_name = self.sender().objectName()
-        self.display_Tags(image_name)
-        self.get_Tags(image_name)
+        try:
+            image_name = self.sender().objectName()
+            self.display_Tags(image_name)
+            self.get_Tags(image_name)
+        except Exception as e:
+            print(e)
         # print(self.sender().objectName())
         # button = self.sender()
         # print(button.pos())
@@ -79,20 +83,21 @@ class RepositoryView(QTableWidget):
 
     def get_Tags(self, name):
         tags = myregistry.image_tags_list(name)
-        self.setRowCount(len(tags))
-        for row, rep in enumerate(tags):
-            self.setItem(row, 0, QTableWidgetItem(rep, ))
-            deletebutton = QPushButton("Delete", self, clicked=self.delete_tag)
-            deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
-            deletebutton.index = [row, 1]
-            deletebutton.setObjectName(rep)
-            detailbutton = QPushButton("Pull", self, clicked=self.delete_tag)
-            detailbutton.index = [row, 2]
-            detailbutton.setObjectName(rep)
-            widget = QWidget()
-            hLayout = QHBoxLayout()
-            hLayout.addWidget(deletebutton)
-            hLayout.addWidget(detailbutton)
-            hLayout.setContentsMargins(5, 2, 5, 2)
-            widget.setLayout(hLayout)
-            self.setCellWidget(row, 1, widget)
+        if tags:
+            self.setRowCount(len(tags))
+            for row, rep in enumerate(tags):
+                self.setItem(row, 0, QTableWidgetItem(rep, ))
+                deletebutton = QPushButton("Delete", self, clicked=self.delete_tag)
+                deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
+                deletebutton.index = [row, 1]
+                deletebutton.setObjectName(rep)
+                detailbutton = QPushButton("Pull", self, clicked=self.delete_tag)
+                detailbutton.index = [row, 2]
+                detailbutton.setObjectName(rep)
+                widget = QWidget()
+                hLayout = QHBoxLayout()
+                hLayout.addWidget(deletebutton)
+                hLayout.addWidget(detailbutton)
+                hLayout.setContentsMargins(5, 2, 5, 2)
+                widget.setLayout(hLayout)
+                self.setCellWidget(row, 1, widget)

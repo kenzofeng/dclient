@@ -18,7 +18,6 @@ class MyConifg(object):
         self.init_config()
 
     def init_config(self):
-        print(self.config_file)
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
         self.server = self.config.defaults()['server']
