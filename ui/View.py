@@ -1,6 +1,9 @@
 from PyQt5.QtCore import QRect, QCoreApplication
-from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget, QTableWidget, QAbstractScrollArea, QTableWidgetItem
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget, QTableWidget, QAbstractScrollArea, QTableWidgetItem, \
+    QMessageBox, QProgressDialog
 from registry import myregistry
+from mythreads import DeleteThread
 
 
 class RepositoryView(QTableWidget):
@@ -49,17 +52,60 @@ class RepositoryView(QTableWidget):
             self.get_Tags(image_name)
         except Exception as e:
             print(e)
-        # print(self.sender().objectName())
-        # button = self.sender()
-        # print(button.pos())
-        # index = self.indexAt(button.pos())
-        # print(index.row(), index.column())
+
+    def setWaitCursor(self):
+        self.wait.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.WaitCursor)
+
+    def setArrowCursor(self):
+        self.setCursor(Qt.ArrowCursor)
+
+    def set_wait(self, value):
+        self.wait.setValue(int(value))
+
+    def finished(self, image):
+        self.get_Tags(image)
+        self.set_wait(100)
 
     def delete_tag(self):
-        print(self.sender().index)
+        reply = QMessageBox.question(self, 'Message', 'Delete image?',
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            try:
+                image_name = self.sender().objectName()
+                image, tag = image_name.split(":")
+                self.wait = QProgressDialog('Loading.......', None, 0, 100, self)
+                self.wait.setWindowTitle('info')
+                self.wait.setWindowFlag(Qt.WindowCloseButtonHint)
+                self.wait.show()
+                self.worker = DeleteThread(image, tag, self)
+                self.worker.progress.connect(self.set_wait)
+                self.worker.finished.connect(self.finished)
+                self.worker.start()
+            except Exception as e:
+                print(e)
+            finally:
+                self.setArrowCursor()
 
     def pull_tag(self):
-        pass
+        reply = QMessageBox.question(self, 'Message', 'Delete image?',
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            try:
+                image_name = self.sender().objectName()
+                image, tag = image_name.split(":")
+                self.wait = QProgressDialog('Loading.......', None, 0, 100, self)
+                self.wait.setWindowTitle('info')
+                self.wait.setWindowFlag(Qt.WindowCloseButtonHint)
+                self.wait.show()
+                self.worker = DeleteThread(image, tag, self)
+                self.worker.progress.connect(self.set_wait)
+                self.worker.finished.connect(self.finished)
+                self.worker.start()
+            except Exception as e:
+                print(e)
+            finally:
+                self.setArrowCursor()
 
     def get_Repositories(self):
         repositories = myregistry.repositories_list()
@@ -83,21 +129,22 @@ class RepositoryView(QTableWidget):
 
     def get_Tags(self, name):
         tags = myregistry.image_tags_list(name)
-        if tags:
-            self.setRowCount(len(tags))
-            for row, rep in enumerate(tags):
-                self.setItem(row, 0, QTableWidgetItem(rep, ))
-                deletebutton = QPushButton("Delete", self, clicked=self.delete_tag)
-                deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
-                deletebutton.index = [row, 1]
-                deletebutton.setObjectName(rep)
-                detailbutton = QPushButton("Pull", self, clicked=self.delete_tag)
-                detailbutton.index = [row, 2]
-                detailbutton.setObjectName(rep)
-                widget = QWidget()
-                hLayout = QHBoxLayout()
-                hLayout.addWidget(deletebutton)
-                hLayout.addWidget(detailbutton)
-                hLayout.setContentsMargins(5, 2, 5, 2)
-                widget.setLayout(hLayout)
-                self.setCellWidget(row, 1, widget)
+        if not tags:
+            tags = []
+        self.setRowCount(len(tags))
+        for row, rep in enumerate(tags):
+            self.setItem(row, 0, QTableWidgetItem(rep, ))
+            deletebutton = QPushButton("Delete", self, clicked=self.delete_tag)
+            deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
+            deletebutton.index = [row, 1]
+            deletebutton.setObjectName("{}:{}".format(name, rep))
+            detailbutton = QPushButton("Pull", self, clicked=self.pull_tag)
+            detailbutton.index = [row, 2]
+            detailbutton.setObjectName(rep)
+            widget = QWidget()
+            hLayout = QHBoxLayout()
+            hLayout.addWidget(deletebutton)
+            hLayout.addWidget(detailbutton)
+            hLayout.setContentsMargins(5, 2, 5, 2)
+            widget.setLayout(hLayout)
+            self.setCellWidget(row, 1, widget)

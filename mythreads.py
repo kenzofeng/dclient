@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from remote import Remote
 import mydocker
+from registry import myregistry
 
 
 class WorkThread(QThread):
@@ -12,6 +13,7 @@ class WorkThread(QThread):
         self.parent = parent
 
     def run(self):
+        self.parent.setWaitCursor()
         self.progress.emit(50)
         dockerfile = Remote.dockerfile()
         self.finished.emit(dockerfile)
@@ -29,6 +31,7 @@ class BuildThread(QThread):
         self.tag_text = tag_text
 
     def run(self):
+        self.parent.setWaitCursor()
         self.progress.emit(50)
         mydocker.build_images(self.projctpath, self.docker_text, self.tag_text)
         self.finished.emit(100)
@@ -44,6 +47,40 @@ class PushThread(QThread):
         self.tag_text = tag_text
 
     def run(self):
+        self.parent.setWaitCursor()
         self.progress.emit(50)
         mydocker.push_image(self.tag_text)
         self.finished.emit(100)
+
+
+class DeleteThread(QThread):
+    finished = pyqtSignal(object)
+    progress = pyqtSignal(object)
+
+    def __init__(self, image, tag, parent=None):
+        super(DeleteThread, self).__init__(parent)
+        self.parent = parent
+        self.image = image
+        self.tag = tag
+
+    def run(self):
+        self.parent.setWaitCursor()
+        self.progress.emit(50)
+        print(myregistry.delete_image(self.image, self.tag))
+        self.finished.emit(self.image)
+
+class PullThread(QThread):
+    finished = pyqtSignal(object)
+    progress = pyqtSignal(object)
+
+    def __init__(self, image, tag, parent=None):
+        super(PullThread, self).__init__(parent)
+        self.parent = parent
+        self.image = image
+        self.tag = tag
+
+    def run(self):
+        self.parent.setWaitCursor()
+        self.progress.emit(50)
+        mydocker.push_image()
+        self.finished.emit(self.image)

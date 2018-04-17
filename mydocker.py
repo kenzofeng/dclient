@@ -29,7 +29,7 @@ def push_image(tag):
         print(e)
 
 
-def pull(image):
+def pull_image(image):
     for line in docker_client.pull(image, stream=True):
         print(str(line, 'utf-8'))
 
@@ -42,4 +42,4 @@ def pull(image):
 
 
 def docker_login_server():
-    docker_client.login('testuser', 'testpassword', registry='https://docker.derbysoft-test.com')
+    docker_client.login('testuser', 'testpassword', registry="https://" + myconfig.docker_server)

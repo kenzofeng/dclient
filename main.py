@@ -35,10 +35,18 @@ class mywindow(QDialog, Ui_Form):
     def set_wait(self, value):
         self.wait.setValue(int(value))
 
+    def setWaitCursor(self):
+        self.wait.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.WaitCursor)
+
+    def setArrowCursor(self):
+        self.setCursor(Qt.ArrowCursor)
+
     def finished(self, dockerfile):
         self.textEdit.setHtml(dockerfile)
         self.RView.get_Repositories()
         self.set_wait(100)
+        self.setArrowCursor()
 
     def folderDialog(self):
         dialog = QFileDialog(self, 'Select Project Path')
