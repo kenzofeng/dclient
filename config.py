@@ -9,6 +9,8 @@ elif __file__:
 
 CONFIG_FILE = "config.ini"
 
+secret_key = b'XQYfjn2t4BkYHsTpkPZDzfSlLQqAJGzEzF8GPkEYjfc='
+
 
 class MyConifg(object):
     def __init__(self):

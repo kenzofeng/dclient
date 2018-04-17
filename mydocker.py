@@ -2,6 +2,7 @@ import docker
 import sys
 import os
 from config import myconfig
+from remote import remote
 
 mswindows = (sys.platform == "win32")
 
@@ -29,9 +30,12 @@ def push_image(tag):
         print(e)
 
 
-def pull_image(image):
-    for line in docker_client.pull(image, stream=True):
-        print(str(line, 'utf-8'))
+def pull_image(image, tag):
+    try:
+        for line in docker_client.pull("{}/{}:{}".format(myconfig.docker_server, image, tag), stream=True):
+            print(str(line, 'utf-8'))
+    except Exception as e:
+        print(e)
 
 
 # def _docker_login_aws():
@@ -42,4 +46,7 @@ def pull_image(image):
 
 
 def docker_login_server():
-    docker_client.login('testuser', 'testpassword', registry="https://" + myconfig.docker_server)
+    try:
+        docker_client.login(remote.username, remote.password, registry="https://" + myconfig.docker_server)
+    except Exception as e:
+        print(e)

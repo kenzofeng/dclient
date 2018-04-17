@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget, QTableWidget, QAbstractScrollArea, QTableWidgetItem, \
     QMessageBox, QProgressDialog
 from registry import myregistry
-from mythreads import DeleteThread
+from mythreads import DeleteThread,PullThread
 
 
 class RepositoryView(QTableWidget):
@@ -88,7 +88,7 @@ class RepositoryView(QTableWidget):
                 self.setArrowCursor()
 
     def pull_tag(self):
-        reply = QMessageBox.question(self, 'Message', 'Delete image?',
+        reply = QMessageBox.question(self, 'Message', 'Pull image?',
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
@@ -98,9 +98,9 @@ class RepositoryView(QTableWidget):
                 self.wait.setWindowTitle('info')
                 self.wait.setWindowFlag(Qt.WindowCloseButtonHint)
                 self.wait.show()
-                self.worker = DeleteThread(image, tag, self)
+                self.worker = PullThread(image, tag, self)
                 self.worker.progress.connect(self.set_wait)
-                self.worker.finished.connect(self.finished)
+                self.worker.finished.connect(self.set_wait)
                 self.worker.start()
             except Exception as e:
                 print(e)
@@ -113,10 +113,13 @@ class RepositoryView(QTableWidget):
         for row, rep in enumerate(repositories):
             self.setItem(row, 0, QTableWidgetItem(rep, ))
             deletebutton = QPushButton("Delete", self, clicked=self.delete_Repository)
+            deletebutton.setEnabled(False)
+            deletebutton.setCursor(Qt.ForbiddenCursor)
             deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
             deletebutton.index = [row, 1]
             deletebutton.setObjectName(rep)
             detailbutton = QPushButton("Detail", self, clicked=self.detail_Repository)
+            detailbutton.setCursor(Qt.PointingHandCursor)
             detailbutton.index = [row, 2]
             detailbutton.setObjectName(rep)
             widget = QWidget()
@@ -135,16 +138,18 @@ class RepositoryView(QTableWidget):
         for row, rep in enumerate(tags):
             self.setItem(row, 0, QTableWidgetItem(rep, ))
             deletebutton = QPushButton("Delete", self, clicked=self.delete_tag)
+            deletebutton.setCursor(Qt.PointingHandCursor)
             deletebutton.setStyleSheet("background-color: rgb(255,0,0);")
             deletebutton.index = [row, 1]
             deletebutton.setObjectName("{}:{}".format(name, rep))
-            detailbutton = QPushButton("Pull", self, clicked=self.pull_tag)
-            detailbutton.index = [row, 2]
-            detailbutton.setObjectName(rep)
+            pullbutton = QPushButton("Pull", self, clicked=self.pull_tag)
+            pullbutton.setCursor(Qt.PointingHandCursor)
+            pullbutton.index = [row, 2]
+            pullbutton.setObjectName("{}:{}".format(name, rep))
             widget = QWidget()
             hLayout = QHBoxLayout()
             hLayout.addWidget(deletebutton)
-            hLayout.addWidget(detailbutton)
+            hLayout.addWidget(pullbutton)
             hLayout.setContentsMargins(5, 2, 5, 2)
             widget.setLayout(hLayout)
             self.setCellWidget(row, 1, widget)

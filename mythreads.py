@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QThread, pyqtSignal
-from remote import Remote
+from remote import remote
 import mydocker
 from registry import myregistry
 
@@ -15,7 +15,9 @@ class WorkThread(QThread):
     def run(self):
         self.parent.setWaitCursor()
         self.progress.emit(50)
-        dockerfile = Remote.dockerfile()
+        dockerfile = remote.dockerfile()
+        remote.getaccess()
+        mydocker.docker_login_server()
         self.finished.emit(dockerfile)
 
 
@@ -69,6 +71,7 @@ class DeleteThread(QThread):
         print(myregistry.delete_image(self.image, self.tag))
         self.finished.emit(self.image)
 
+
 class PullThread(QThread):
     finished = pyqtSignal(object)
     progress = pyqtSignal(object)
@@ -82,5 +85,5 @@ class PullThread(QThread):
     def run(self):
         self.parent.setWaitCursor()
         self.progress.emit(50)
-        mydocker.push_image()
-        self.finished.emit(self.image)
+        mydocker.pull_image(self.image, self.tag)
+        self.finished.emit(100)
