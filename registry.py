@@ -2,6 +2,7 @@ import requests
 from config import myconfig
 import json
 import urllib3
+from remote import remote
 
 urllib3.disable_warnings()
 
@@ -35,7 +36,7 @@ class Registry(requests.Session):
         return response.status_code
 
     def _add_auth_header(self, **kwargs):
-        kwargs['headers']['Authorization'] = 'Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk'
+        kwargs['headers']['Authorization'] = remote.authorization
         return kwargs
 
     def _add_header(self, **kwargs):
