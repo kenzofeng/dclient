@@ -45,11 +45,19 @@ class mywindow(QDialog, Ui_Form):
     def setArrowCursor(self):
         self.setCursor(Qt.ArrowCursor)
 
-    def finished(self, dockerfile):
-        self.textEdit.setHtml(dockerfile)
-        self.RView.get_Repositories()
-        self.set_wait(100)
+    def event_finished(self, value):
+        self.wait.setValue(int(value))
         self.setArrowCursor()
+
+    def finished(self, dockerfile):
+        try:
+            self.textEdit.setHtml(dockerfile)
+            self.RView.get_Repositories()
+            self.set_wait(100)
+        except Exception as e:
+            print(e)
+        finally:
+            self.setArrowCursor()
 
     def folderDialog(self):
         dialog = QFileDialog(self, 'Select Project Path')
@@ -80,7 +88,7 @@ class mywindow(QDialog, Ui_Form):
                 self.wait.show()
                 build_worker = BuildThread(projctpath, docker_text, tag_text, self)
                 build_worker.progress.connect(self.set_wait)
-                build_worker.finished.connect(self.set_wait)
+                build_worker.finished.connect(self.event_finished)
                 build_worker.start()
 
     def pushimage(self):
@@ -100,7 +108,7 @@ class mywindow(QDialog, Ui_Form):
                 self.wait.show()
                 build_worker = PushThread(tag_text, self)
                 build_worker.progress.connect(self.set_wait)
-                build_worker.finished.connect(self.set_wait)
+                build_worker.finished.connect(self.event_finished)
                 build_worker.start()
 
     def selectfolder(self):

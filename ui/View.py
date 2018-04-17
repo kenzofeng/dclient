@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QWidget, QTableWidget, QAbstractScrollArea, QTableWidgetItem, \
     QMessageBox, QProgressDialog
 from registry import myregistry
-from mythreads import DeleteThread,PullThread
+from mythreads import DeleteThread, PullThread
 
 
 class RepositoryView(QTableWidget):
@@ -63,9 +63,14 @@ class RepositoryView(QTableWidget):
     def set_wait(self, value):
         self.wait.setValue(int(value))
 
+    def event_finished(self,value):
+        self.set_wait(int(value))
+        self.setArrowCursor()
+
     def finished(self, image):
         self.get_Tags(image)
         self.set_wait(100)
+        self.setArrowCursor()
 
     def delete_tag(self):
         reply = QMessageBox.question(self, 'Message', 'Delete image?',
@@ -84,8 +89,6 @@ class RepositoryView(QTableWidget):
                 self.worker.start()
             except Exception as e:
                 print(e)
-            finally:
-                self.setArrowCursor()
 
     def pull_tag(self):
         reply = QMessageBox.question(self, 'Message', 'Pull image?',
@@ -100,12 +103,10 @@ class RepositoryView(QTableWidget):
                 self.wait.show()
                 self.worker = PullThread(image, tag, self)
                 self.worker.progress.connect(self.set_wait)
-                self.worker.finished.connect(self.set_wait)
+                self.worker.finished.connect(self.event_finished)
                 self.worker.start()
             except Exception as e:
                 print(e)
-            finally:
-                self.setArrowCursor()
 
     def get_Repositories(self):
         repositories = myregistry.repositories_list()
