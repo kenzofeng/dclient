@@ -30,7 +30,6 @@ class Remote(object):
             self.password = bytes.decode(cipher_suite.decrypt(str.encode(content['p'])))
             self.authorization = "Basic {}".format(
                 bytes.decode(base64.b64encode(str.encode("{}:{}".format(self.username, self.password)))))
-            print(11111111111)
         except Exception as e:
             print(e)
 
