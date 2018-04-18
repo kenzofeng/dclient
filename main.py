@@ -8,7 +8,6 @@ from ui.View import RepositoryView
 from config import myconfig
 from form import Ui_Form
 from mythreads import WorkThread, BuildThread, PushThread
-import mydocker
 
 
 class mywindow(QDialog, Ui_Form):
