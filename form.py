@@ -2,12 +2,11 @@
 
 # Form implementation generated from reading ui file 'form.ui'
 #
-# Created by: PyQt5 UI code generator 5.10
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -52,6 +51,10 @@ class Ui_Form(object):
         self.toolButton = QtWidgets.QToolButton(self.layoutWidget)
         self.toolButton.setObjectName("toolButton")
         self.gridLayout.addWidget(self.toolButton, 2, 3, 1, 1)
+        self.UseDockerFile = QtWidgets.QCheckBox(self.layoutWidget)
+        self.UseDockerFile.setChecked(True)
+        self.UseDockerFile.setObjectName("UseDockerFile")
+        self.gridLayout.addWidget(self.UseDockerFile, 6, 3, 1, 1)
         self.pushButton = QtWidgets.QPushButton(self.tab)
         self.pushButton.setGeometry(QtCore.QRect(870, 470, 91, 41))
         self.pushButton.setObjectName("pushButton")
@@ -76,16 +79,9 @@ class Ui_Form(object):
         self.HOME = QtWidgets.QPushButton(self.tab_2)
         self.HOME.setGeometry(QtCore.QRect(10, 10, 81, 31))
         self.HOME.setObjectName("HOME")
-        self.CreateRep = QtWidgets.QPushButton(self.tab_2)
-        self.CreateRep.setGeometry(QtCore.QRect(830, 10, 141, 31))
-        self.CreateRep.setObjectName("CreateRep")
         self.tabWidget.addTab(self.tab_2, "")
-
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
-        self.buildbutton.clicked.connect(Form.buildimage)
-        self.pushButton.clicked.connect(Form.pushimage)
-        self.toolButton.clicked.connect(Form.selectfolder)
         QtCore.QMetaObject.connectSlotsByName(Form)
         Form.setTabOrder(self.ProjectPath, self.buildbutton)
         Form.setTabOrder(self.buildbutton, self.tabWidget)
@@ -98,12 +94,13 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", "Tag:"))
         self.groupBox.setTitle(_translate("Form", "DockerFile:"))
         self.toolButton.setText(_translate("Form", "..."))
+        self.UseDockerFile.setText(_translate("Form", "DockerFile"))
         self.pushButton.setText(_translate("Form", "push"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "Image"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "Docker Project"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("Form", "Repository Name"))
         item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("Form", "Action"))
         self.HOME.setText(_translate("Form", "HOME"))
-        self.CreateRep.setText(_translate("Form", "Create Repository"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Form", "AWS Repositories"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Form", "Docker Registry"))
+

@@ -25,17 +25,18 @@ class BuildThread(QThread):
     finished = pyqtSignal(object)
     progress = pyqtSignal(object)
 
-    def __init__(self, projctpath, docker_text, tag_text, parent=None):
+    def __init__(self, projctpath, docker_text, tag_text, df_status, parent=None):
         super(BuildThread, self).__init__(parent)
         self.parent = parent
         self.projctpath = projctpath
         self.docker_text = docker_text
         self.tag_text = tag_text
+        self.df_status = df_status
 
     def run(self):
         self.parent.setWaitCursor()
         self.progress.emit(50)
-        mydocker.build_images(self.projctpath, self.docker_text, self.tag_text)
+        mydocker.build_images(self.projctpath, self.docker_text, self.tag_text, self.df_status)
         self.finished.emit(100)
 
 

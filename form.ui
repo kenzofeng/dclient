@@ -30,7 +30,7 @@
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
-     <string>Image</string>
+     <string>Docker Project</string>
     </attribute>
     <widget class="QPushButton" name="buildbutton">
      <property name="geometry">
@@ -106,6 +106,16 @@
         </property>
        </widget>
       </item>
+      <item row="6" column="3">
+       <widget class="QCheckBox" name="UseDockerFile">
+        <property name="text">
+         <string>DockerFile</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QPushButton" name="pushButton">
@@ -127,7 +137,7 @@
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
-     <string>AWS Repositories</string>
+     <string>Docker Registry</string>
     </attribute>
     <widget class="QTableWidget" name="tableWidget">
      <property name="geometry">
@@ -169,19 +179,6 @@
      </property>
      <property name="text">
       <string>HOME</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="CreateRep">
-     <property name="geometry">
-      <rect>
-       <x>830</x>
-       <y>10</y>
-       <width>141</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Create Repository</string>
      </property>
     </widget>
    </widget>

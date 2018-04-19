@@ -12,9 +12,10 @@ else:
     docker_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 
-def build_images(projectpath, dockerfile, tag):
+def build_images(projectpath, dockerfile, tag, df_status):
     try:
-        open(os.path.join(projectpath, "dockerfile"), 'w').write(dockerfile)
+        if df_status:
+            open(os.path.join(projectpath, "dockerfile"), 'w').write(dockerfile)
         global docker_client
         for line in docker_client.build(path=projectpath, tag="{}/{}".format(myconfig.docker_server, tag)):
             print(str(line, 'utf-8'))

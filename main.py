@@ -16,11 +16,9 @@ class mywindow(QDialog, Ui_Form):
         self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         self.setFixedSize(986, 557)
         self.setupUi(self)
+        self.even_bundle()
         self.ProjectPath.setText(myconfig.project)
         self.Tag.setText(myconfig.tag)
-        self.HOME.setCursor(Qt.PointingHandCursor)
-        self.buildbutton.setCursor(Qt.PointingHandCursor)
-        self.pushButton.setCursor(Qt.PointingHandCursor)
         self.show()
         self.wait = QProgressDialog('Loading.......', None, 0, 100, self)
         self.wait.setWindowTitle('info')
@@ -30,9 +28,26 @@ class mywindow(QDialog, Ui_Form):
         self.worker.progress.connect(self.set_wait)
         self.worker.finished.connect(self.finished)
         self.worker.start()
+
+    def even_bundle(self):
+        self.buildbutton.clicked.connect(self.buildimage)
+        self.toolButton.clicked.connect(self.selectfolder)
+        self.pushButton.clicked.connect(self.pushimage)
+        self.UseDockerFile.clicked.connect(self.check_DockerFile)
+        self.HOME.setCursor(Qt.PointingHandCursor)
+        self.buildbutton.setCursor(Qt.PointingHandCursor)
+        self.pushButton.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.WaitCursor)
         self.RView = RepositoryView(self.tab_2)
         self.RView.display_Repositories()
         self.HOME.clicked.connect(self.RView.Home)
+        self.setEnabled(False)
+
+    def check_DockerFile(self):
+        if self.UseDockerFile.isChecked():
+            self.textEdit.setEnabled(True)
+        else:
+            self.textEdit.setEnabled(False)
 
     def set_wait(self, value):
         self.wait.setValue(int(value))
@@ -53,6 +68,7 @@ class mywindow(QDialog, Ui_Form):
             self.textEdit.setHtml(dockerfile)
             self.RView.get_Repositories()
             self.set_wait(100)
+            self.setEnabled(True)
         except Exception as e:
             print(e)
         finally:
@@ -69,6 +85,7 @@ class mywindow(QDialog, Ui_Form):
         projctpath = self.ProjectPath.text()
         docker_text = self.textEdit.toPlainText()
         tag_text = self.Tag.text()
+        df_status = self.UseDockerFile.isChecked()
         if not os.path.exists(projctpath):
             QMessageBox.critical(self, 'Error Message', 'Project Path is not exists',
                                  QMessageBox.Yes, QMessageBox.Yes)
@@ -85,7 +102,7 @@ class mywindow(QDialog, Ui_Form):
                 self.wait.setWindowTitle('info')
                 self.wait.setWindowFlag(Qt.WindowCloseButtonHint)
                 self.wait.show()
-                build_worker = BuildThread(projctpath, docker_text, tag_text, self)
+                build_worker = BuildThread(projctpath, docker_text, tag_text, df_status, self)
                 build_worker.progress.connect(self.set_wait)
                 build_worker.finished.connect(self.event_finished)
                 build_worker.start()
